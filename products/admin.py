@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from .models import Product, Order, OrderItem
 from django.db.models import Sum
 from django.contrib.auth.models import User  # for managing users
@@ -45,6 +45,7 @@ class MyAdminSite(admin.AdminSite):
             'totals': totals
         }
         return render(request, 'admin/dashboard.html', context)
+
 # Instantiate Custom AdminSite
 admin_site = MyAdminSite(name='myadmin')
 
