@@ -1,0 +1,132 @@
+{% load tz %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyShop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<!--js-->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('search-input');
+    
+    if (input) {
+        input.addEventListener('keyup', function() {
+            let query = this.value;
+
+            fetch(`/search/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultsDiv = document.getElementById('search-results');
+                    resultsDiv.innerHTML = '';
+
+                    if (query === '') return;
+
+                    data.products.forEach(product => {
+                        resultsDiv.innerHTML += `
+                            <div class="card mb-2 p-2">
+                                <strong>${product.name}</strong> - KES ${product.price}
+                            </div>
+                        `;
+                    });
+                });
+        });
+    }
+});
+</script>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark px-3 fixed-top">
+    <a class="navbar-brand" href="/">MyShop</a>
+
+    <!-- Search form -->
+    <form class="d-flex mx-3" method="GET" action="{% url 'home' %}">
+        <input id="search-input" class="form-control form-control-sm me-2"
+       type="search" name="q" placeholder="Search products..." value="{{ request.GET.q }}">
+        <button class="btn btn-primary btn-sm" type="submit">Search</button>
+    </form>
+
+    <div class="d-flex align-items-center">
+        <!-- Cart and auth buttons stay here -->
+        <a href="{% url 'view_cart' %}" class="text-white position-relative me-3" style="font-size: 1.0rem;">
+            <i class="fas fa-shopping-cart"></i>
+            {% if request.session.cart %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ request.session.cart|length }}
+                </span>
+            {% endif %}
+        </a>
+
+        {% if user.is_authenticated %}
+            <span class="text-white me-2">Hi, {{ user.username }}</span>
+            <a class="btn btn-warning btn-sm me-2" href="{% url 'order_history' %}">Orders</a>
+
+            {% if user.is_staff %}
+            <a class="btn btn-secondary btn-sm me-2" href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
+
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        {% else %}
+            <a class="btn btn-success btn-sm me-2" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-primary btn-sm" href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </div>
+</nav>
+<div id="search-results" class="container mt-3"></div>
+<div class="container" style="padding-top: 100px;">
+    {% block content %}{% endblock %}
+</div>
+
+
+<!-- Footer -->
+<footer class="bg-dark text-white mt-5 pt-5 pb-3">
+    <div class="container">
+        <div class="row">
+
+            <!-- About Section -->
+            <div class="col-md-4 mb-3">
+                <h5>MyShop</h5>
+                <p>Your one-stop online store for all your shopping needs. Quality products delivered fast and safely.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-4 mb-3">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="text-white text-decoration-none">Home</a></li>
+                    <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Shop</a></li>
+                    <li><a href="{% url 'order_history' %}" class="text-white text-decoration-none">My Orders</a></li>
+                    <li><a href="{% url 'register' %}" class="text-white text-decoration-none">Register</a></li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div class="col-md-4 mb-3">
+                <h5>Follow Us</h5>
+                <a href="#" class="text-white me-3 fs-5"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-white me-3 fs-5"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-3 fs-5"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white me-3 fs-5"><i class="fab fa-linkedin"></i></a>
+            </div>
+
+        </div>
+
+        <hr class="bg-secondary">
+
+        <div class="row">
+            <div class="col text-center">
+                <small>© {% now "Y" %} MyShop. All Rights Reserved.</small>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

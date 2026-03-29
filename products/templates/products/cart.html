@@ -1,0 +1,39 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+
+<h2>Your Cart</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Action</th>
+    </tr>
+
+    {% for item in cart_items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>Ksh {{ item.product.price }}</td>
+        <td>
+            <a href="{% url 'decrease_quantity' item.product.id %}" class="btn btn-sm btn-danger">-</a>
+            {{ item.quantity }}
+            <a href="{% url 'increase_quantity' item.product.id %}" class="btn btn-sm btn-success">+</a>
+        </td>
+        <td>Ksh {{ item.subtotal }}</td>
+        <td>
+            <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-sm btn-warning">
+                Remove
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+ 
+<h3>Total: Ksh {{ total }}</h3>
+
+<a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+
+{% endblock %}

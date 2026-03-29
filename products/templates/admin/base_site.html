@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+{{ block.super }}
+{% endblock %}
+
+{% block nav-global %}
+{{ block.super }}
+{% if request.user.is_staff %}
+<li class="nav-item">
+    <a class="nav-link btn btn-success text-white" href="{% url 'home' %}" target="_blank">
+        🏠 Go to Store
+    </a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+<p style="text-align:center;">MyShop © 2026</p>
+{% endblock %}

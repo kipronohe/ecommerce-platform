@@ -1,0 +1,119 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">📊 MyShop Dashboard</h1>
+
+<!-- 🔹 Stats Cards -->
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3 shadow-sm rounded-3">
+            <div class="card-body text-center">
+                <h6 class="card-title">Total Sales</h6>
+                <h3>KES {{ total_sales }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3 shadow-sm rounded-3">
+            <div class="card-body text-center">
+                <h6 class="card-title">Total Orders</h6>
+                <h3>{{ total_orders }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-dark bg-warning mb-3 shadow-sm rounded-3">
+            <div class="card-body text-center">
+                <h6 class="card-title">Customers</h6>
+                <h3>{{ total_customers }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 🔹 Quick Actions -->
+<div class="mb-4">
+    <a href="{% url 'admin:products_order_changelist' %}" class="btn btn-primary me-2">
+        📦 View Orders
+    </a>
+    <a href="{% url 'admin:products_product_changelist' %}" class="btn btn-success me-2">
+        🛒 View Products
+    </a>
+    <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-warning">
+        👥 View Users
+    </a>
+</div>
+
+<!-- 🔹 Sales Chart -->
+<div class="card shadow-sm p-3 rounded-3 mb-4">
+    <h5 class="mb-3">📈 Sales Overview</h5>
+    <canvas id="salesChart" height="100"></canvas>
+</div>
+
+<!-- 🔹 Top Products -->
+<div class="card shadow-sm p-3 rounded-3">
+    <h5 class="mb-3">🏆 Top Selling Products</h5>
+
+    {% if top_products %}
+        <ul class="list-group">
+            {% for product in top_products %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ product.product__name }}
+                    <span class="badge bg-primary rounded-pill">
+                        {{ product.total_sold }} sold
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No sales data available.</p>
+    {% endif %}
+</div>
+
+<!-- 🔹 Pass data safely -->
+{{ dates|json_script:"dates-data" }}
+{{ totals|json_script:"totals-data" }}
+
+<!-- 🔹 Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const dates = JSON.parse(document.getElementById('dates-data').textContent);
+const totals = JSON.parse(document.getElementById('totals-data').textContent);
+
+const ctx = document.getElementById('salesChart');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: dates,
+        datasets: [{
+            label: 'Sales (KES)',
+            data: totals,
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">My Orders 🛒</h2>
+
+    {% if orders %}
+        <div class="row g-3">
+            {% for order in orders %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h6 class="card-title mb-1">Order #{{ order.id }}</h6>
+                            <small class="text-muted">{{ order.created_at|date:"M d, Y H:i" }}</small>
+
+                            <p class="mt-2 mb-2"><strong>Total:</strong> Ksh {{ order.total_price }}</p>
+
+                            <ul class="list-unstyled small mb-3">
+                                {% for item in order.orderitem_set.all %}
+                                    <li>
+                                        {{ item.product.name }} 
+                                        <span class="badge bg-secondary rounded-pill">{{ item.quantity }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            {% if order.total_price > 0 %}
+                                <a href="{% url 'pay_order' order.id %}" class="btn btn-sm btn-success w-100">
+                                    Pay Now
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            You have no orders yet. <a href="{% url 'home' %}">Start shopping now!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+
+<div class="card mx-auto" style="max-width: 400px;">
+    <div class="card-body">
+        <h4 class="card-title text-center mb-3">
+            Pay for Order #{{ order.id }}
+        </h4>
+
+        <p class="text-center">
+            Total: <strong class="text-success">Ksh {{ order.total_price }}</strong>
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">M-Pesa Phone Number</label>
+                <input 
+                    type="text" 
+                    name="phone" 
+                    class="form-control"
+                    placeholder="2547XXXXXXXX" 
+                    required
+                >
+                <small class="text-muted">
+                    Format: 2547XXXXXXXX
+                </small>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">
+                💳 Pay Now
+            </button>
+        </form>
+
+        <a href="/orders/" class="btn btn-secondary w-100 mt-2">
+            Cancel
+        </a>
+    </div>
+</div>
+
+{% endblock %}

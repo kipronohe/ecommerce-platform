@@ -1,0 +1,41 @@
+{% extends 'products/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Products</h2>
+
+<div class="row">
+    {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm product-card overflow-hidden">
+                {% if product.image %}
+                    <!-- Add 'product-img' class -->
+                    <img src="{{ product.image.url }}" class="card-img-top product-img" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body position-relative">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">KES {{ product.price }}</p>
+                    
+                    <a href="{% url 'product_detail' product.id %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+.product-card {
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.03); /* scales whole card */
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+/* Set all product images to same height and cover the card-top */
+.product-img {
+    height: 200px; /* fixed height */
+    object-fit: cover; /* keeps aspect ratio and crops */
+}
+</style>
+{% endblock %}
+
